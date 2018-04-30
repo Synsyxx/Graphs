@@ -1,8 +1,26 @@
 /**
+ * 
+ * Helper Function
+ * Generated HexColorCode
+ */
+function getRandomColor(hex = '') {
+  if (hex.length === 6) return '#' + hex;
+
+  const hexPart = ((Math.random() * 240) | 0).toString(16);
+  hex += (hexPart.length === 1) ? '0' + hexPart : hexPart;
+
+  return getRandomColor(hex);
+}
+
+/**
  * Edge
  */
 export class Edge {
   // !!! IMPLEMENT ME
+  constructor(destination, weight = 1) {
+    this.destination = destination;
+    this.weight = weight;
+  }
 }
 
 /**
@@ -10,6 +28,12 @@ export class Edge {
  */
 export class Vertex {
   // !!! IMPLEMENT ME
+  constructor() {
+    this.edges = [];
+    this.fillColor = 'white';
+    this.parent = null;
+    this.visited = false;
+  }
 }
 
 /**
@@ -26,8 +50,9 @@ export class Graph {
   randomize(width, height, pxBox, probability=0.6) {
     // Helper function to set up two-way edges
     function connectVerts(v0, v1) {
-      v0.edges.push(new Edge(v1));
-      v1.edges.push(new Edge(v0));
+
+      v0.edges.push(new Edge(v1, Math.floor(Math.random() * (10 - 1) + 1)));
+      v1.edges.push(new Edge(v0,Math.floor(Math.random() * (10 - 1) + 1)));
     }
 
     let count = 0;
@@ -110,13 +135,64 @@ export class Graph {
    * BFS
    */
   bfs(start) {
-    // !!! IMPLEMENT ME
+    console.log("Called bfs() at vertex ", start);
+    const queue = [start];
+
+    let currentGroup = getRandomColor();
+
+    while (queue.length > 0) {
+
+      const currentNode = queue[0];
+
+      if (currentNode.fillColor === 'white')
+        currentNode.fillColor = currentGroup;
+
+      currentNode.edges.forEach(edge => {
+        const { destination } = edge;
+
+        if (destination.fillColor === 'white') {
+          queue.push(destination);
+          destination.fillColor = currentGroup;
+        }
+
+        destination.parent = currentNode;
+
+      });
+
+      queue.shift();
+      
+      if (queue.length === 0) {
+
+        for (let e = 0; e < this.vertexes.length; e++) {
+          if (this.vertexes[e].fillColor === 'white') {
+            currentGroup = getRandomColor();
+            queue.push(this.vertexes[e]);
+            break;
+          }
+        }
+
+      }
+
+      // break;
+      
+
+    }
+
   }
 
   /**
    * Get the connected components
    */
   getConnectedComponents() {
-    // !!! IMPLEMENT ME
+    const connectedComponentsList = [];
+
+    for (let vertex of this.vertexes) {
+      if (vertex.color === 'white') {
+        const connectedComponent = this.bfs(vertex);
+        connectedComponentsList.push(connectedComponent);
+      }
+    }
+    console.log(connectedComponentsList);
+    return connectedComponentsList;
   }
 }

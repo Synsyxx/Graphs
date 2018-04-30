@@ -21,7 +21,7 @@ You can make the functions in `graph.js` available to code in other
 files with the `export` keyword:
 
 ```javascript
-export class Graph { 
+export class Graph {  
   // ...
 ```
 
